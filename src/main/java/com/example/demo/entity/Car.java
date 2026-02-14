@@ -22,7 +22,7 @@ public class Car {
     @Column(name = "Model")
     private String model;
 
-    @Column(name = "Year")
+    @Column(name = "ModelYear")
     private Integer year;
 
     private String regnumber;
