@@ -15,7 +15,6 @@ public class Car {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
-
     @Column(name= "Brand")
     private String brand;
 

@@ -1,7 +1,15 @@
 package com.example.demo;
 
+import com.example.demo.entity.Car;
+import com.example.demo.repository.CarRepository;
+import jakarta.annotation.PostConstruct;
+import org.springframework.boot.ApplicationArguments;
+import org.springframework.boot.ApplicationRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.stereotype.Component;
+
+import java.util.NoSuchElementException;
 
 @SpringBootApplication
 public class DemoApplication {
@@ -10,4 +18,70 @@ public class DemoApplication {
         SpringApplication.run(DemoApplication.class, args);
     }
 
+
+    @Component
+    class Runner implements ApplicationRunner {
+
+
+        private final CarRepository repository;
+
+        // Constructor injection :)
+        Runner(CarRepository repository){
+            this.repository = repository;
+        }
+
+        @PostConstruct
+        void init(){
+            repository.save(new Car("520D", "BMW",2011, "AD11AHD", "Black"));
+            repository.save(new Car("A1", "AUDI",2025, "CJ25LSK", "Orange"));
+            repository.save(new Car( "Micra", "Nissan",2013, "WS13ASD", "Grey"));
+        }
+
+
+        @Override
+        public void run(ApplicationArguments args) throws Exception {
+            Car output;
+            try {
+                output = repository.findById(2L).orElseThrow(NoSuchElementException::new);
+                System.out.println("Car with 2ID: " + output);
+            } catch (NoSuchElementException e) {
+                System.out.println("Not Found");
+            }
+
+            System.out.println("Now we are going to update");
+
+            try{
+                Car car = repository.findById(1L).orElseThrow(NoSuchElementException:: new);
+                System.out.println("Before Update " + car);
+                System.out.println("Updating....");
+                car.setModel("720D");
+                repository.save(car);
+                System.out.println("After Update " + car);
+
+            } catch (NoSuchElementException e){
+                System.out.println("Not Found");
+            }
+
+            // Now i want to delete a Car by ID 1;
+
+            System.out.println("Before the delete");
+            printAllCars();
+
+            repository.deleteById(1L);
+            System.out.println("After the delete");
+
+            printAllCars();
+
+
+
+        }
+
+        void printAllCars(){
+            Iterable<Car> allCars = repository.findAll();
+
+            for(Car i: allCars){
+                System.out.println(i);
+            }
+        }
+    }
 }
