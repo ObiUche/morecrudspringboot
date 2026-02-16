@@ -1,15 +1,22 @@
 package com.example.demo;
 
 import com.example.demo.entity.Car;
+import com.example.demo.entity.Owner;
 import com.example.demo.repository.CarRepository;
+import com.example.demo.repository.OwnerRepository;
 import jakarta.annotation.PostConstruct;
+import jakarta.transaction.Transactional;
+import org.hibernate.Hibernate;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.Optional;
 
 @SpringBootApplication
 public class DemoApplication {
@@ -25,16 +32,35 @@ public class DemoApplication {
 
         private final CarRepository repository;
 
+        // added the owner repository by constructor injection
+
+        private final OwnerRepository orepository;
+
         // Constructor injection :)
-        Runner(CarRepository repository){
+        Runner(CarRepository repository, OwnerRepository orepository){
+
             this.repository = repository;
+            this.orepository = orepository;
         }
 
+
         @PostConstruct
+        @Transactional
         void init(){
-            repository.save(new Car("520D", "BMW",2011, "AD11AHD", "Black"));
-            repository.save(new Car("A1", "AUDI",2025, "CJ25LSK", "Orange"));
-            repository.save(new Car( "Micra", "Nissan",2013, "WS13ASD", "Grey"));
+
+            Owner owner1 = new Owner("Obinna Uche", "Software Engineer");
+            Owner owner2 = new Owner("Chidera Okafor", "Lawyer");
+
+            orepository.save( owner2);
+            orepository.save( owner1);
+
+
+
+
+
+            repository.save(new Car(owner1 , "BMW","520D",2011, "AD11AHD", "Black"));
+            repository.save(new Car(owner2,"A1", "AUDI",2025, "CJ25LSK", "Orange"));
+            repository.save(new Car( owner1, "Nissan"," Micra",2013, "WS13ASD", "Grey"));
         }
 
 
@@ -74,6 +100,7 @@ public class DemoApplication {
 
 
 
+
         }
 
         void printAllCars(){
@@ -83,5 +110,17 @@ public class DemoApplication {
                 System.out.println(i);
             }
         }
+//
+//        @Transactional
+//        void printAllOwners(){
+//            Iterable<Owner> allOwners = orepository.findAll();
+//
+//            for( Owner i : allOwners){
+//                Hibernate.initialize(i.getCarList());
+//            }
+//
+//            allOwners.forEach(System.out::println);
+//        }
+
     }
 }

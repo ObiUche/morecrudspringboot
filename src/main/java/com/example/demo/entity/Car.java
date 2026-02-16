@@ -1,11 +1,7 @@
 package com.example.demo.entity;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Id;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Table;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.GeneratedValue;
+import jakarta.annotation.Nullable;
+import jakarta.persistence.*;
 
 @Entity
 @Table(name = "cars")
@@ -30,12 +26,18 @@ public class Car {
     private String colour;
 
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "owner", nullable = false)
+    private Owner owner;
+
     // Need no args constructor
     public Car(){}
 
-    public Car(String model, String brand, Integer year, String regnumber, String colour) {
-        this.model = model;
+
+    public Car(Owner owner, String brand, String model, Integer year, String regnumber, String colour) {
+        this.owner = owner;
         this.brand = brand;
+        this.model = model;
         this.year = year;
         this.regnumber = regnumber;
         this.colour = colour;
@@ -83,6 +85,15 @@ public class Car {
 
     public void setRegnumber(String regnumber) {
         this.regnumber = regnumber;
+    }
+
+
+    public Owner getOwner() {
+        return owner;
+    }
+
+    public void setOwner(Owner owner) {
+        this.owner = owner;
     }
 
     @Override
