@@ -18,6 +18,7 @@ public class Owner {
     private String occupation;
 
 
+    @JsonIgnore
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "owner")
     private List<Car> carList;
 
